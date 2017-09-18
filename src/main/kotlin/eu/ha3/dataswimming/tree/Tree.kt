@@ -1,5 +1,7 @@
 package eu.ha3.dataswimming.tree
 
+import java.util.*
+
 /**
  * (Default template)
  * Created on 2017-09-18
@@ -15,38 +17,46 @@ class Tree<T : Pathable> {
         this.bit = ""
         this.branches = emptyList()
         this.leaves = leaves
+        checkWeakRules()
     }
 
     constructor(bit: String, leaves: Set<T>) {
         this.bit = bit
         this.branches = emptyList()
         this.leaves = leaves
+        checkWeakRules()
     }
 
     constructor(branches: List<Tree<T>>) {
         this.bit = ""
         this.branches = branches.sortedBy { it.bit }
         this.leaves = emptySet()
+        checkWeakRules()
     }
 
     constructor(branches: List<Tree<T>>, leaves: Set<T>) {
-        if (branches.isEmpty() && leaves.isEmpty()) {
-            throw TreeRequiresAnElementException()
-        }
-
         this.bit = ""
         this.branches = branches.sortedBy { it.bit }
         this.leaves = leaves
+        checkWeakRules()
     }
 
     constructor(bit: String, branches: List<Tree<T>>, leaves: Set<T>) {
+        this.bit = bit
+        this.branches = branches.sortedBy { it.bit }
+        this.leaves = leaves
+        checkWeakRules()
+    }
+
+    private fun checkWeakRules() {
+        // Note: We do not check if Tree bits are identical.
         if (branches.isEmpty() && leaves.isEmpty()) {
             throw TreeRequiresAnElementException()
         }
 
-        this.bit = bit
-        this.branches = branches.sortedBy { it.bit }
-        this.leaves = leaves
+        if (!Collections.disjoint(branches.map { it.bit }, leaves.map { it.lastBit() })) {
+            throw TreeConflictingBitException()
+        }
     }
 
     companion object {
@@ -56,7 +66,6 @@ class Tree<T : Pathable> {
             }
 
             val root = TreeBuilder<T>()
-//            val branchToTree = HashMap<List<String>, Tree<T>>();
 
             for (pathable in pathables) {
                 val items = pathable.asPathableItems()

@@ -40,6 +40,9 @@ internal class TreeTest {
                 Tree.from(listOf(TTPathable("bin/diamond"), TTPathable("bin/thing"), TTPathable(".something"))),
                 `is`(Tree(listOf(Tree("bin", setOf(TTPathable("bin/thing"), TTPathable("bin/diamond")))), setOf(TTPathable(".something"))))
         )
+        assertThrows(TreeConflictingBitException::class.java, {
+            Tree.from(listOf(TTPathable("bin"), TTPathable("bin/thing")))
+        })
     }
 }
 
