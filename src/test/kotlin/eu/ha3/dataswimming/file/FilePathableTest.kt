@@ -1,4 +1,4 @@
-package eu.ha3.dataswimming.tree
+package eu.ha3.dataswimming.file
 
 import eu.ha3.dataswimming.file.FilePathable
 import org.hamcrest.MatcherAssert.assertThat
