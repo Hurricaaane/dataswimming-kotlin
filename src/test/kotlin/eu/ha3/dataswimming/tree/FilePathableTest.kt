@@ -23,4 +23,13 @@ internal class FilePathableTest {
         assertThat(FilePathable("/usr/root/index", 5, created, modified).asPathableItems(), `is`(listOf("", "usr", "root", "index")))
         assertThat(FilePathable("C:/Windows/System32/mapi32.dll", 109_568, created, modified).asPathableItems(), `is`(listOf("C:", "Windows", "System32", "mapi32.dll")))
     }
+
+    @Test
+    fun equality() {
+        val created = ZonedDateTime.of(LocalDateTime.of(2000, 12, 29, 23, 50, 50), ZoneOffset.UTC)
+        val modified = ZonedDateTime.of(LocalDateTime.of(2017, 9, 19, 22, 34, 4), ZoneOffset.UTC)
+
+        assertThat(FilePathable("/usr/root/index", 5, created, modified),
+                `is`(FilePathable("/usr/root/index", 5, created, modified)))
+    }
 }

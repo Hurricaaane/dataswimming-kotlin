@@ -164,6 +164,34 @@ internal class TreeTest {
                 `is`(Tree.from(listOf(TTWeighed("usr/root/index", 1), TTWeighed("usr/root/context", 500))))
         )
     }
+
+    @Test
+    fun equality() {
+        assertThat(
+                Tree.from(listOf(TTPathable(".something"))),
+                `is`(Tree.from(listOf(TTPathable(".something"))))
+        )
+        assertThat(
+                Tree.from(listOf(TTPathable(".something"), TTPathable(".else"))),
+                `is`(Tree.from(listOf(TTPathable(".else"), TTPathable(".something"))))
+        )
+        assertThat(
+                Tree.from(listOf(TTPathable("usr/root"))),
+                `is`(Tree.from(listOf(TTPathable("usr/root"))))
+        )
+        assertThat(
+                Tree.from(listOf(TTPathable("usr/root/context"), TTPathable("usr/root/index"))),
+                `is`(Tree.from(listOf(TTPathable("usr/root/context"), TTPathable("usr/root/index"))))
+        )
+        assertThat(
+                Tree.from(listOf(TTPathable("usr/root/context"), TTPathable("usr/root/index"))),
+                `is`(Tree.from(listOf(TTPathable("usr/root/index"), TTPathable("usr/root/context"))))
+        )
+        assertThat(
+                Tree.from(listOf(TTPathable(".something"), TTPathable(".else"), TTPathable("usr/root/context"), TTPathable("usr/root/index"))),
+                `is`(Tree.from(listOf(TTPathable("usr/root/index"), TTPathable("usr/root/context"), TTPathable(".something"), TTPathable(".else"))))
+        )
+    }
 }
 
 class TTPathable(path: String) : Pathable {
