@@ -1,6 +1,8 @@
 package eu.ha3.dataswimming.tree
 
 import java.util.*
+import java.util.function.Consumer
+import java.util.function.Predicate
 
 /**
  * (Default template)
@@ -9,9 +11,9 @@ import java.util.*
  * @author Ha3
  */
 class Tree<T : Pathable> {
-    private val leaves: Set<T>
-    private var bit: String
-    private var branches: List<Tree<T>>
+    val leaves: Set<T>
+    val bit: String
+    val branches: List<Tree<T>>
 
     constructor(leaves: Set<T>) {
         this.bit = ""
@@ -75,20 +77,54 @@ class Tree<T : Pathable> {
             val root = TreeBuilder<T>()
 
             for (pathable in pathables) {
-                val items = pathable.asPathableItems()
-                if (items.size == 1) {
-                    root.leaves.add(pathable)
-
-                } else {
-                    var current = root
-                    for (item in items.subList(0, items.size - 1)) {
-                        current = current.getting(item)
-                    }
-                    current.leaves.add(pathable)
-                }
+                mergeInto(root, pathable, false)
             }
 
             return root.freeze()
+        }
+
+        fun <T : Pathable> merge(root: Tree<T>, override: Tree<T>): Tree<T> {
+            val root = TreeBuilder(root)
+
+            for (pathable in override.subtree()) {
+                mergeInto(root, pathable, true)
+            }
+
+            return root.freeze()
+        }
+
+        fun <T : Pathable> mergeInto(alpha: Tree<T>, pathables: List<T>): Tree<T> {
+            val root = TreeBuilder(alpha)
+
+            for (pathable in pathables) {
+                mergeInto(root, pathable, true)
+            }
+
+            return root.freeze()
+        }
+
+        private fun <T : Pathable> mergeInto(root: TreeBuilder<T>, pathable: T, overrideMode: Boolean) {
+            val items = pathable.asPathableItems()
+            if (items.size == 1) {
+                root.leaves.add(pathable)
+
+            } else {
+                var current = root
+                for (item in items.subList(0, items.size - 1)) {
+                    current = current.getting(item)
+                }
+
+                if (overrideMode) {
+                    current.leaves.stream()
+                            .filter(Predicate { it.lastBit() == pathable.lastBit() })
+                            .findAny()
+                            .ifPresent(Consumer {
+                                current.leaves.remove(it)
+                            })
+                }
+
+                current.leaves.add(pathable)
+            }
         }
     }
 

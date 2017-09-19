@@ -90,6 +90,80 @@ internal class TreeTest {
                 `is`(setOf(".something", "thing", "diamond", "index"))
         )
     }
+
+    @Test
+    fun merge() {
+        assertThat(
+                Tree.merge(
+                        Tree.from(listOf(TTPathable(".something"))),
+                        Tree.from(listOf(TTPathable(".else")))
+                ),
+                `is`(Tree.from(listOf(TTPathable(".something"), TTPathable(".else"))))
+        )
+        assertThat(
+                Tree.merge(
+                        Tree.from(listOf(TTPathable("usr/root/index"))),
+                        Tree.from(listOf(TTPathable("usr/root/context")))
+                ),
+                `is`(Tree.from(listOf(TTPathable("usr/root/index"), TTPathable("usr/root/context"))))
+        )
+        assertThrows(TreeConflictingBitException::class.java, {
+            Tree.merge(
+                    Tree.from(listOf(TTPathable("usr/root/index"))),
+                    Tree.from(listOf(TTPathable("usr/root")))
+            )
+        })
+        assertThrows(TreeConflictingBitException::class.java, {
+            Tree.merge(
+                    Tree.from(listOf(TTPathable("usr/root"))),
+                    Tree.from(listOf(TTPathable("usr/root/index")))
+            )
+        })
+        assertThat(
+                Tree.merge(
+                        Tree.from(listOf(TTWeighed("usr/root/index", 1), TTWeighed("usr/root/context", 2))),
+                        Tree.from(listOf(TTWeighed("usr/root/context", 500)))
+                ),
+                `is`(Tree.from(listOf(TTWeighed("usr/root/index", 1), TTWeighed("usr/root/context", 500))))
+        )
+    }
+
+    @Test
+    fun mergeInto() {
+        assertThat(
+                Tree.mergeInto(
+                        Tree.from(listOf(TTPathable(".something"))),
+                        listOf(TTPathable(".else"))
+                ),
+                `is`(Tree.from(listOf(TTPathable(".something"), TTPathable(".else"))))
+        )
+        assertThat(
+                Tree.mergeInto(
+                        Tree.from(listOf(TTPathable("usr/root/index"))),
+                        listOf(TTPathable("usr/root/context"))
+                ),
+                `is`(Tree.from(listOf(TTPathable("usr/root/index"), TTPathable("usr/root/context"))))
+        )
+        assertThrows(TreeConflictingBitException::class.java, {
+            Tree.mergeInto(
+                    Tree.from(listOf(TTPathable("usr/root/index"))),
+                    listOf(TTPathable("usr/root"))
+            )
+        })
+        assertThrows(TreeConflictingBitException::class.java, {
+            Tree.mergeInto(
+                    Tree.from(listOf(TTPathable("usr/root"))),
+                    listOf(TTPathable("usr/root/index"))
+            )
+        })
+        assertThat(
+                Tree.mergeInto(
+                        Tree.from(listOf(TTWeighed("usr/root/index", 1), TTWeighed("usr/root/context", 2))),
+                        listOf(TTWeighed("usr/root/context", 500))
+                ),
+                `is`(Tree.from(listOf(TTWeighed("usr/root/index", 1), TTWeighed("usr/root/context", 500))))
+        )
+    }
 }
 
 class TTPathable(path: String) : Pathable {

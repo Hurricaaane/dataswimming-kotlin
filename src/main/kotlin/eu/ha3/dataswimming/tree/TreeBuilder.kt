@@ -3,6 +3,7 @@ package eu.ha3.dataswimming.tree
 data class TreeBuilder<T : Pathable>(val bit: String, var branches: MutableList<TreeBuilder<T>>, val leaves: MutableSet<T>) {
     constructor() : this("", mutableListOf(), mutableSetOf())
     constructor(bit: String) : this(bit, mutableListOf(), mutableSetOf())
+    constructor(tree: Tree<T>) : this(tree.bit, tree.branches.map { TreeBuilder(it) }.toMutableList(), tree.leaves.toMutableSet())
 
     fun freeze(): Tree<T> {
         if (branches.isEmpty() && leaves.isEmpty()) {
