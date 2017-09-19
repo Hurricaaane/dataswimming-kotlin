@@ -34,6 +34,13 @@ class Tree<T : Pathable> {
         checkWeakRules()
     }
 
+    constructor(bit: String, branches: List<Tree<T>>) {
+        this.bit = bit
+        this.branches = branches.sortedBy { it.bit }
+        this.leaves = emptySet()
+        checkWeakRules()
+    }
+
     constructor(branches: List<Tree<T>>, leaves: Set<T>) {
         this.bit = ""
         this.branches = branches.sortedBy { it.bit }
@@ -75,7 +82,7 @@ class Tree<T : Pathable> {
                 } else {
                     var current = root
                     for (item in items.subList(0, items.size - 1)) {
-                        current = root.getting(item)
+                        current = current.getting(item)
                     }
                     current.leaves.add(pathable)
                 }
@@ -107,6 +114,33 @@ class Tree<T : Pathable> {
 
     override fun toString(): String {
         return "Tree(leaves=$leaves, bit='$bit', branches=$branches)"
+    }
+
+    fun subtree(): List<T> {
+        // FIXME: Super Inefficient, look for better Kotlin idioms
+
+        val myLeaves = leaves
+
+        val subtreeLeaves = branches
+                .map { it.subtree() }
+                .flatMap { it }
+
+        return listOf(myLeaves, subtreeLeaves)
+                .flatMap { it }
+    }
+
+    fun <V> mapSubtree(mappingFunction: (T) -> V): List<V> {
+        // FIXME: Super Inefficient, look for better Kotlin idioms
+
+        val myLeaves = leaves
+                .map { mappingFunction(it) }
+
+        val subtreeLeaves = branches
+                .map { it.mapSubtree(mappingFunction) }
+                .flatMap { it }
+
+        return listOf(myLeaves, subtreeLeaves)
+                .flatMap { it }
     }
 }
 

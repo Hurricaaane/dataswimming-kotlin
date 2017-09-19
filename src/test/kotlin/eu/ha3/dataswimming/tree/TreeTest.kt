@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
  */
 internal class TreeTest {
     @Test
-    fun suite() {
+    fun pathable() {
         assertThrows(TreeRequiresAnElementException::class.java, { Tree.from(listOf<Pathable>()) })
         assertThat(Tree.from(listOf(TTPathable("data"))), `is`(Tree(setOf(TTPathable("data")))))
         assertThat(
@@ -43,6 +43,52 @@ internal class TreeTest {
         assertThrows(TreeConflictingBitException::class.java, {
             Tree.from(listOf(TTPathable("bin"), TTPathable("bin/thing")))
         })
+        assertThat(
+                Tree.from(listOf(TTPathable("usr/root/index"))),
+                `is`(Tree(listOf(Tree("usr", listOf(Tree("root", setOf(TTPathable("usr/root/index"))))))))
+        )
+    }
+
+    @Test
+    fun mappingSubtree() {
+        assertThat(
+                Tree.from(listOf(TTPathable("data"))).subtree(),
+                `is`(listOf(TTPathable("data")))
+        )
+        assertThat(
+                Tree.from(listOf(TTPathable("bin/thing"), TTPathable("bin/diamond"))).subtree(),
+                `is`(listOf(TTPathable("bin/thing"), TTPathable("bin/diamond")))
+        )
+        assertThat(
+                Tree.from(listOf(TTWeighed("data", 1))).mapSubtree({ it.weight }).reduce(Int::plus),
+                `is`(1)
+        )
+        assertThat(
+                Tree.from(listOf(TTWeighed("data", 1), TTWeighed("bin", 2))).mapSubtree({ it.weight }).reduce(Int::plus),
+                `is`(3)
+        )
+        assertThat(
+                Tree.from(listOf(TTWeighed(".something", 10), TTWeighed("bin/thing", 1), TTWeighed("bin/diamond", 2))).mapSubtree({ it.weight }).reduce(Int::plus),
+                `is`(13)
+        )
+        assertThat(
+                Tree.from(listOf(
+                        TTWeighed(".something", 10),
+                        TTWeighed("bin/thing", 1),
+                        TTWeighed("bin/diamond", 2),
+                        TTWeighed("usr/root/index", 7)
+                )).mapSubtree({ it.weight }).reduce(Int::plus),
+                `is`(20)
+        )
+        assertThat(
+                Tree.from(listOf(
+                        TTPathable(".something"),
+                        TTPathable("bin/thing"),
+                        TTPathable("bin/diamond"),
+                        TTPathable("usr/root/index")
+                )).mapSubtree({ it.lastBit() }).toSet(),
+                `is`(setOf(".something", "thing", "diamond", "index"))
+        )
     }
 }
 
@@ -71,3 +117,31 @@ class TTPathable(path: String) : Pathable {
     private var pathableItems: List<String> = path.split('/')
 }
 
+
+class TTWeighed(path: String, val weight: Int) : Pathable {
+    override fun asPathableItems(): List<String> = pathableItems
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as TTWeighed
+
+        if (weight != other.weight) return false
+        if (pathableItems != other.pathableItems) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = weight
+        result = 31 * result + pathableItems.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "[${pathableItems.joinToString("/")}:$weight]"
+    }
+
+    private var pathableItems: List<String> = path.split('/')
+}
