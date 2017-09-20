@@ -37,4 +37,8 @@ class Treemapping<T> {
     fun isLeaf(): Boolean {
         return element != null
     }
+
+    fun oppositeSplit(): Double {
+        return 1 - split
+    }
 }
