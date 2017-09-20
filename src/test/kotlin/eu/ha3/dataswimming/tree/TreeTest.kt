@@ -1,10 +1,10 @@
 package eu.ha3.dataswimming.tree
 
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.nullValue
 import org.hamcrest.core.Is.`is`
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import kotlin.test.assertNull
 
 /**
  * (Default template)
@@ -196,8 +196,9 @@ internal class TreeTest {
 
     @Test
     fun pathing() {
-        assertNull(
-                Tree.from(listOf(TTPathable(".something"))).get(".something")
+        assertThat(
+                Tree.from(listOf(TTPathable(".something"))).get(".something"),
+                `is`(nullValue())
         )
         assertThat(
                 Tree.from(listOf(TTPathable("usr/root/index"))).get("usr"),
@@ -211,8 +212,9 @@ internal class TreeTest {
                 Tree.from(listOf(TTPathable("usr/root/index"))).get("usr")?.get("root")?.leaf("index"),
                 `is`(TTPathable("usr/root/index"))
         )
-        assertNull(
-                Tree.from(listOf(TTPathable("usr/root/index"))).get("usr")?.get("self")
+        assertThat(
+                Tree.from(listOf(TTPathable("usr/root/index"))).get("usr")?.get("self"),
+                `is`(nullValue())
         )
     }
 }
