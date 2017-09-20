@@ -1,6 +1,7 @@
 package eu.ha3.dataswimming
 
 import eu.ha3.dataswimming.file.FilePathable
+import eu.ha3.dataswimming.file.Pathing
 import eu.ha3.dataswimming.file.VirtualDirectory
 import eu.ha3.dataswimming.file.Weighted
 import eu.ha3.dataswimming.tesselation.Tesselation
@@ -39,7 +40,7 @@ internal class TesselationIntegrationTest {
         )
 
         val tree = Tree.from(files)
-        val tesselations = tesselateTree(tree.get("")!!.get("com")!!.get("example")!!)
+        val tesselations = tesselateTree(tree.navigate(Pathing("/com/example"))!!)
         tesselations.forEach { print(it) }
         assertThat(tesselations.size, `is`(5))
         assertThat(tesselations.filter { it.item is VirtualDirectory }.size, `is`(2))
