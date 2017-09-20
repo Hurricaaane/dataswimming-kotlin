@@ -117,30 +117,19 @@ class Tree<T : Pathable>(val bit :String, val branches: List<Tree<T>>, val leave
     }
 
     fun subtree(): List<T> {
-        // FIXME: Super Inefficient, look for better Kotlin idioms
+        return subtreeSequence().toList()
+    }
 
-        val myLeaves = leaves
-
-        val subtreeLeaves = branches
-                .map { it.subtree() }
-                .flatMap { it }
-
-        return listOf(myLeaves, subtreeLeaves)
-                .flatMap { it }
+    fun subtreeSequence(): Sequence<T> {
+        // TODO: Review this functional idiom
+        return sequenceOf(
+                branches.asSequence().map { it.subtreeSequence() }.flatMap { it },
+                leaves.asSequence()
+        ).flatMap { it }
     }
 
     fun <V> mapSubtree(mappingFunction: (T) -> V): List<V> {
-        // FIXME: Super Inefficient, look for better Kotlin idioms
-
-        val myLeaves = leaves
-                .map { mappingFunction(it) }
-
-        val subtreeLeaves = branches
-                .map { it.mapSubtree(mappingFunction) }
-                .flatMap { it }
-
-        return listOf(myLeaves, subtreeLeaves)
-                .flatMap { it }
+        return subtreeSequence().map(mappingFunction).toList()
     }
 
     private val bitToBranch: Map<String, Tree<T>> by lazy { branches.associateBy({ it.bit }, { it }) }
