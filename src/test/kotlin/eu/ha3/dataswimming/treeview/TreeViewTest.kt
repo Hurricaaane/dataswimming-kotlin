@@ -15,19 +15,25 @@ import org.junit.jupiter.api.Test
 internal class TreeViewTest {
     @Test
     fun transforming() {
+        val items = listOf(TTWeighed("usr/root/thing", 5), TTWeighed("usr/root/thing", 2), TTWeighed("usr/.something", 10))
+        val sumItemsInBranchFn: (Tree<TTWeighed>) -> TTBranhView<TTWeighed> = { TTBranhView(it, it.bit, it.mapSubtree { it.weight }.reduce(Int::plus)) }
+
+        val expectedTransformation = TTBranhView(Tree("root", setOf(TTWeighed("usr/root/thing", 5), TTWeighed("usr/root/thing", 2))), "root", 7)
+        val expectedLeaves = setOf(TTWeighed("usr/.something", 10))
+
         assertThat(
-                TreeView.of(Tree.from(listOf(TTWeighed("usr/root/thing", 5), TTWeighed("usr/root/thing", 2), TTWeighed("usr/.something", 10))).get("usr")!!, { TTVirtual(it, it.bit, it.mapSubtree{it.weight}.reduce(Int::plus)) }),
-                `is`(TreeView(listOf(TTVirtual(Tree("root", setOf(TTWeighed("usr/root/thing", 5), TTWeighed("usr/root/thing", 2))), "root", 7)), setOf(TTWeighed("usr/.something", 10))))
+                TreeView.of(Tree.from(items).get("usr")!!, sumItemsInBranchFn),
+                `is`(TreeView(listOf(expectedTransformation), expectedLeaves))
         )
     }
 }
 
-internal class TTVirtual<T : Pathable>(val tree: Tree<T>, val bit: String, val weight: Int) {
+internal class TTBranhView<T : Pathable>(val tree: Tree<T>, val bit: String, val weight: Int) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as TTVirtual<*>
+        other as TTBranhView<*>
 
         if (tree != other.tree) return false
         if (bit != other.bit) return false
@@ -44,7 +50,7 @@ internal class TTVirtual<T : Pathable>(val tree: Tree<T>, val bit: String, val w
     }
 
     override fun toString(): String {
-        return "TTVirtual(tree=$tree, bit='$bit', weight=$weight)"
+        return "TTBranhView(tree=$tree, bit='$bit', weight=$weight)"
     }
 }
 
