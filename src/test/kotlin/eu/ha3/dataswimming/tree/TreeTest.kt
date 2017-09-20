@@ -4,6 +4,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import kotlin.test.assertNull
 
 /**
  * (Default template)
@@ -192,9 +193,31 @@ internal class TreeTest {
                 `is`(Tree.from(listOf(TTPathable("usr/root/index"), TTPathable("usr/root/context"), TTPathable(".something"), TTPathable(".else"))))
         )
     }
+
+    @Test
+    fun pathing() {
+        assertNull(
+                Tree.from(listOf(TTPathable(".something"))).get(".something")
+        )
+        assertThat(
+                Tree.from(listOf(TTPathable("usr/root/index"))).get("usr"),
+                `is`(Tree("usr", listOf(Tree("root", setOf(TTPathable("usr/root/index"))))))
+        )
+        assertThat(
+                Tree.from(listOf(TTPathable("usr/root/index"))).get("usr")?.get("root"),
+                `is`(Tree("root", setOf(TTPathable("usr/root/index"))))
+        )
+        assertThat(
+                Tree.from(listOf(TTPathable("usr/root/index"))).get("usr")?.get("root")?.leaf("index"),
+                `is`(TTPathable("usr/root/index"))
+        )
+        assertNull(
+                Tree.from(listOf(TTPathable("usr/root/index"))).get("usr")?.get("self")
+        )
+    }
 }
 
-class TTPathable(path: String) : Pathable {
+internal class TTPathable(path: String) : Pathable {
     override fun asPathableItems(): List<String> = pathableItems
 
     override fun equals(other: Any?): Boolean {
@@ -220,7 +243,7 @@ class TTPathable(path: String) : Pathable {
 }
 
 
-class TTWeighed(path: String, val weight: Int) : Pathable {
+internal class TTWeighed(path: String, val weight: Int) : Pathable {
     override fun asPathableItems(): List<String> = pathableItems
 
     override fun equals(other: Any?): Boolean {

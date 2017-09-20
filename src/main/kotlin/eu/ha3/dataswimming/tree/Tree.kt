@@ -10,50 +10,14 @@ import java.util.function.Predicate
  *
  * @author Ha3
  */
-class Tree<T : Pathable> {
-    val leaves: Set<T>
-    val bit: String
-    val branches: List<Tree<T>>
+class Tree<T : Pathable>(val bit :String, val branches: List<Tree<T>>, val leaves: Set<T>) {
+    constructor(leaves: Set<T>): this("", emptyList(), leaves)
+    constructor(branches: List<Tree<T>>): this("", branches.sortedBy { it.bit }, emptySet())
+    constructor(branches: List<Tree<T>>, leaves: Set<T>): this("", branches.sortedBy { it.bit }, leaves)
+    constructor(bit: String, leaves: Set<T>): this(bit, emptyList(), leaves)
+    constructor(bit: String, branches: List<Tree<T>>): this(bit, branches.sortedBy { it.bit }, emptySet())
 
-    constructor(leaves: Set<T>) {
-        this.bit = ""
-        this.branches = emptyList()
-        this.leaves = leaves
-        checkWeakRules()
-    }
-
-    constructor(bit: String, leaves: Set<T>) {
-        this.bit = bit
-        this.branches = emptyList()
-        this.leaves = leaves
-        checkWeakRules()
-    }
-
-    constructor(branches: List<Tree<T>>) {
-        this.bit = ""
-        this.branches = branches.sortedBy { it.bit }
-        this.leaves = emptySet()
-        checkWeakRules()
-    }
-
-    constructor(bit: String, branches: List<Tree<T>>) {
-        this.bit = bit
-        this.branches = branches.sortedBy { it.bit }
-        this.leaves = emptySet()
-        checkWeakRules()
-    }
-
-    constructor(branches: List<Tree<T>>, leaves: Set<T>) {
-        this.bit = ""
-        this.branches = branches.sortedBy { it.bit }
-        this.leaves = leaves
-        checkWeakRules()
-    }
-
-    constructor(bit: String, branches: List<Tree<T>>, leaves: Set<T>) {
-        this.bit = bit
-        this.branches = branches.sortedBy { it.bit }
-        this.leaves = leaves
+    init {
         checkWeakRules()
     }
 
@@ -177,6 +141,17 @@ class Tree<T : Pathable> {
 
         return listOf(myLeaves, subtreeLeaves)
                 .flatMap { it }
+    }
+
+    private val bitToBranch: Map<String, Tree<T>> by lazy { branches.associateBy({ it.bit }, { it }) }
+    private val bitToLeaf: Map<String, T> by lazy { leaves.associateBy({ it.lastBit() }, { it }) }
+
+    fun get(bit: String): Tree<T>? {
+        return bitToBranch[bit]
+    }
+
+    fun leaf(bit: String): T? {
+        return bitToLeaf[bit]
     }
 }
 
