@@ -216,6 +216,14 @@ internal class TreeTest {
                 Tree.from(listOf(TTPathable("usr/root/index"))).get("usr")?.get("self"),
                 `is`(nullValue())
         )
+        assertThat(
+                Tree.from(listOf(TTPathable("usr/root/index"))).navigate(TTPathable("usr/root")),
+                `is`(Tree("root", setOf(TTPathable("usr/root/index"))))
+        )
+        assertThat(
+                Tree.from(listOf(TTPathable("usr/root/index"))).navigate(TTPathable("usr/root/unpathable/subpath/thing")),
+                `is`(nullValue())
+        )
     }
 }
 

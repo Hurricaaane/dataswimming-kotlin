@@ -139,6 +139,16 @@ class Tree<T : Pathable>(val bit :String, val branches: List<Tree<T>>, val leave
         return bitToBranch[bit]
     }
 
+    fun navigate(pathable: Pathable): Tree<T>? {
+        var current: Tree<T>? = this
+
+        for (item in pathable.asPathableItems()) {
+            current = current?.get(item)
+        }
+
+        return current
+    }
+
     fun leaf(bit: String): T? {
         return bitToLeaf[bit]
     }
