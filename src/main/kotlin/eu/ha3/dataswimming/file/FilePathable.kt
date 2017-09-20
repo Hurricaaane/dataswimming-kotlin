@@ -9,12 +9,14 @@ import java.time.ZonedDateTime
  *
  * @author Ha3
  */
-data class FilePathable(
+data class FilePathable (
         val path: String,
-        val size: Long,
+        private val size: Long,
         val created: ZonedDateTime,
         val modified: ZonedDateTime
-) : Pathable {
+) : Pathable, Weighted {
+    override fun getSize(): Long = size
+
     private val pathableItems: List<String> by lazy {
         path.split("/")
     }
