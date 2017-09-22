@@ -4,7 +4,7 @@ import eu.ha3.dataswimming.file.FilePathable
 import eu.ha3.dataswimming.file.Pathing
 import eu.ha3.dataswimming.file.VirtualDirectory
 import eu.ha3.dataswimming.file.Weighted
-import eu.ha3.dataswimming.tesselation.Tesselation
+import eu.ha3.dataswimming.tessellation.Tessellation
 import eu.ha3.dataswimming.tree.Tree
 import eu.ha3.dataswimming.treemapping.Treemapping
 import eu.ha3.dataswimming.treeview.TreeView
@@ -21,7 +21,7 @@ import java.time.ZonedDateTime
  *
  * @author Ha3
  */
-internal class TesselationIntegrationTest {
+internal class TessellationIntegrationTest {
     @Test
     fun chaining() {
         val created = ZonedDateTime.of(LocalDateTime.of(2000, 12, 29, 23, 50, 50), ZoneOffset.UTC)
@@ -40,15 +40,15 @@ internal class TesselationIntegrationTest {
         )
 
         val tree = Tree.from(files)
-        val tesselations = tesselateTree(tree.navigate(Pathing("/com/example"))!!)
-        tesselations.forEach { print(it) }
-        assertThat(tesselations.size, `is`(5))
-        assertThat(tesselations.filter { it.item is VirtualDirectory }.size, `is`(2))
-        assertThat(tesselations.filter { it.item is FilePathable }.size, `is`(3))
-        assertThat((tesselations.find { it.item.getSize() == 494L }?.item as VirtualDirectory).bit, `is`("css"))
+        val tessellations = tessellateTree(tree.navigate(Pathing("/com/example"))!!)
+        tessellations.forEach { print(it) }
+        assertThat(tessellations.size, `is`(5))
+        assertThat(tessellations.filter { it.item is VirtualDirectory }.size, `is`(2))
+        assertThat(tessellations.filter { it.item is FilePathable }.size, `is`(3))
+        assertThat((tessellations.find { it.item.getSize() == 494L }?.item as VirtualDirectory).bit, `is`("css"))
     }
 
-    private fun tesselateTree(tree: Tree<FilePathable>): List<Tesselation<Weighted>> {
+    private fun tessellateTree(tree: Tree<FilePathable>): List<Tessellation<Weighted>> {
         val treeView = TreeView.of(tree) {
             VirtualDirectory(it.bit, it.subtreeSequence().map { it.getSize() }.reduce(Long::plus), it.subtreeSequence().count().toLong())
         }
@@ -59,8 +59,8 @@ internal class TesselationIntegrationTest {
                 .toList()
 
         val treemap = Treemapping(weights, { it.getSize() })
-        val tesselations = Tesselation.from(treemap, 0)
+        val tessellations = Tessellation.from(treemap, 0)
 
-        return tesselations
+        return tessellations
     }
 }
