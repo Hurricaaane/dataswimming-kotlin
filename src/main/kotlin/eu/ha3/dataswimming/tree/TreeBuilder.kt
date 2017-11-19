@@ -14,13 +14,14 @@ data class TreeBuilder<T : Pathable>(val bit: String, var branches: MutableList<
     }
 
     fun getting(item: String): TreeBuilder<T> {
-        return branches.stream()
+        return branches.asSequence()
                 .filter({ it.bit == item })
-                .findAny()
-                .orElseGet({
-                    val newBranch = TreeBuilder<T>(item)
-                    branches.add(newBranch)
-                    newBranch
-                })
+                .firstOrNull() ?: createBranch(item)
+    }
+
+    private fun createBranch(item: String): TreeBuilder<T> {
+        val newBranch = TreeBuilder<T>(item)
+        branches.add(newBranch)
+        return newBranch
     }
 }

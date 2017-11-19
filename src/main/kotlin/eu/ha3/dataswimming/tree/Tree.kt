@@ -1,8 +1,6 @@
 package eu.ha3.dataswimming.tree
 
 import java.util.*
-import java.util.function.Consumer
-import java.util.function.Predicate
 
 /**
  * (Default template)
@@ -79,12 +77,11 @@ class Tree<T : Pathable>(val bit :String, val branches: List<Tree<T>>, val leave
                 }
 
                 if (overrideMode) {
-                    current.leaves.stream()
-                            .filter(Predicate { it.lastBit() == pathable.lastBit() })
-                            .findAny()
-                            .ifPresent(Consumer {
-                                current.leaves.remove(it)
-                            })
+                    current.leaves.asSequence()
+                            .filter { it.lastBit() == pathable.lastBit() }
+                            .firstOrNull()?.let {
+                        current.leaves.remove(it)
+                    }
                 }
 
                 current.leaves.add(pathable)
