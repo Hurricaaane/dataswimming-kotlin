@@ -9,7 +9,7 @@ import eu.ha3.dataswimming.tree.Tree
  *
  * @author Ha3
  */
-class TreeView<B, L : Pathable>(val branches: List<B>, val leaves: Set<L>) {
+class TreeView<out B, out L : Pathable>(val branches: List<B>, val leaves: Set<L>) {
     companion object {
         fun <B, L : Pathable> of(subject: Tree<L>, transformer: (Tree<L>) -> B): TreeView<B, L> {
             return TreeView(subject.branches.map(transformer), subject.leaves)

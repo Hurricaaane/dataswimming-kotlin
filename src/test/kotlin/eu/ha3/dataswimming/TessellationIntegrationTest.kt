@@ -53,14 +53,13 @@ internal class TessellationIntegrationTest {
             VirtualDirectory(it.bit, it.subtreeSequence().map { it.getSize() }.reduce(Long::plus), it.subtreeSequence().count().toLong())
         }
 
-        val weights = sequenceOf<Sequence<Weighted>>(treeView.branches.asSequence(), treeView.leaves.asSequence())
+        val weights = sequenceOf(treeView.branches.asSequence(), treeView.leaves.asSequence())
                 .flatMap { it }
                 .sortedBy { -it.getSize() }
                 .toList()
 
         val treemap = Treemapping(weights, { it.getSize() })
-        val tessellations = Tessellation.from(treemap, 0)
 
-        return tessellations
+        return Tessellation.from(treemap, 0)
     }
 }

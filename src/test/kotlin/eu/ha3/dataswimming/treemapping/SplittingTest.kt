@@ -16,7 +16,7 @@ internal class SplittingTest {
     fun splitting() {
         val fn: (Int) -> Long = Int::toLong
 
-        assertThrows(TreemappingRequiresAnElementException::class.java, { Splitting(listOf<Int>(), fn) })
+        assertThrows(TreemappingRequiresAnElementException::class.java, { Splitting(listOf(), fn) })
         assertThat(Splitting(listOf(1), fn).left, `is`(listOf(1)))
         assertThat(Splitting(listOf(1, 2), fn).left, `is`(listOf(1)))
         assertThat(Splitting(listOf(1, 2), fn).right, `is`(listOf(2)))

@@ -6,27 +6,11 @@ package eu.ha3.dataswimming.treemapping
  *
  * @author Ha3
  */
-class Treemapping<T> {
+class Treemapping<T>(elements: List<T>, weighFunction: (T) -> Long) {
     val left: Treemapping<T>?
     val right: Treemapping<T>?
     val element: T?
     val split: Double
-
-    constructor(elements: List<T>, weighFunction: (T) -> Long) {
-        val splitting = Splitting(elements, weighFunction)
-        if (splitting.right.isEmpty()) {
-            left = null
-            right = null
-            split = 0.0
-            element = splitting.left[0]
-
-        } else {
-            left = Treemapping(splitting.left, weighFunction)
-            right = Treemapping(splitting.right, weighFunction)
-            split = calculateSplit(splitting, weighFunction)
-            element = null
-        }
-    }
 
     private fun calculateSplit(splitting: Splitting<T>, weighFunction: (T) -> Long): Double {
         val ls = splitting.left.map(weighFunction).reduce(Long::plus)
@@ -40,5 +24,21 @@ class Treemapping<T> {
 
     fun oppositeSplit(): Double {
         return 1 - split
+    }
+
+    init {
+        val splitting = Splitting(elements, weighFunction)
+        if (splitting.right.isEmpty()) {
+            left = null
+            right = null
+            split = 0.0
+            element = splitting.left[0]
+
+        } else {
+            left = Treemapping(splitting.left, weighFunction)
+            right = Treemapping(splitting.right, weighFunction)
+            split = calculateSplit(splitting, weighFunction)
+            element = null
+        }
     }
 }

@@ -1,6 +1,5 @@
 package eu.ha3.dataswimming.file
 
-import eu.ha3.dataswimming.file.FilePathable
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
 import org.junit.jupiter.api.Test

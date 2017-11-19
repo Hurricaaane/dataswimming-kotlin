@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 internal class TreeTest {
     @Test
     fun pathable() {
-        assertThrows(TreeRequiresAnElementException::class.java, { Tree.from(listOf<Pathable>()) })
+        assertThrows(TreeRequiresAnElementException::class.java, { Tree.from(listOf()) })
         assertThat(Tree.from(listOf(TTPathable("data"))), `is`(Tree(setOf(TTPathable("data")))))
         assertThat(
                 Tree.from(listOf(TTPathable("data"), TTPathable("bin"))),

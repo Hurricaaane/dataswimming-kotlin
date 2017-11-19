@@ -8,7 +8,7 @@ import eu.ha3.dataswimming.treemapping.Treemapping
  *
  * @author Ha3
  */
-class Tessellation<T>(val item: T, val x: Double, val y: Double, val w: Double, val h: Double) {
+class Tessellation<out T>(val item: T, val x: Double, val y: Double, val w: Double, val h: Double) {
     companion object {
         fun <T> from(treemap: Treemapping<T>, initialBreadth: Int): List<Tessellation<T>> {
             return internalTessellation(treemap, 0.0, 0.0, 1.0, 1.0, initialBreadth)

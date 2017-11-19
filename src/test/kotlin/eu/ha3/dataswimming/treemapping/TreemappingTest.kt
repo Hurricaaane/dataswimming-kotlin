@@ -17,7 +17,7 @@ internal class TreemappingTest {
     fun treemapping() {
         val fn: (Int) -> Long = Int::toLong
 
-        assertThrows(TreemappingRequiresAnElementException::class.java, { Treemapping(listOf<Int>(), fn) })
+        assertThrows(TreemappingRequiresAnElementException::class.java, { Treemapping(listOf(), fn) })
         assertThat(Treemapping(listOf(1), fn).isLeaf(), `is`(true))
         assertThat(Treemapping(listOf(0), fn).isLeaf(), `is`(true))
         assertThat(Treemapping(listOf(1, 1), fn).isLeaf(), `is`(false))
