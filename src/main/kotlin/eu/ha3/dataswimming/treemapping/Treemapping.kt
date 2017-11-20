@@ -21,7 +21,7 @@ open class Treemapping<T>(val isLeaf: Boolean, val split: Double) {
 
     companion object {
         fun <T> of(elements: List<T>, weighFunction: (T) -> Long): Treemapping<T> {
-            val splitting = Splitting(elements, weighFunction)
+            val splitting = Splitting.of(elements, weighFunction)
             if (splitting.right.isEmpty()) {
                 return TreemappingLeaf(splitting.left[0])
 
