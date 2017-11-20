@@ -58,7 +58,7 @@ internal class TessellationIntegrationTest {
                 .sortedBy { -it.getSize() }
                 .toList()
 
-        val treemap = Treemapping(weights, { it.getSize() })
+        val treemap = Treemapping.of(weights, { it.getSize() })
 
         return Tessellation.from(treemap, 0)
     }

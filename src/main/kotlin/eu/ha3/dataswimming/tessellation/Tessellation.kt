@@ -1,6 +1,8 @@
 package eu.ha3.dataswimming.tessellation
 
 import eu.ha3.dataswimming.treemapping.Treemapping
+import eu.ha3.dataswimming.treemapping.TreemappingBranch
+import eu.ha3.dataswimming.treemapping.TreemappingLeaf
 
 /**
  * (Default template)
@@ -15,19 +17,21 @@ class Tessellation<out T>(val item: T, val x: Double, val y: Double, val w: Doub
         }
 
         private fun <T> internalTessellation(treemap: Treemapping<T>, xx: Double, yy: Double, ww: Double, hh: Double, breadth: Int): List<Tessellation<T>> {
-            if (treemap.isLeaf()) {
-                return listOf(Tessellation(treemap.element!!, xx, yy, ww, hh))
+            if (treemap.isLeaf) {
+                treemap as TreemappingLeaf
+                return listOf(Tessellation(treemap.element, xx, yy, ww, hh))
 
             } else {
+                treemap as TreemappingBranch
                 if (breadth % 2 == 0) {
                     return listOf(
                             internalTessellation(
-                                    treemap.left!!,
+                                    treemap.left,
                                     xx, yy, ww * treemap.split, hh,
                                     breadth + 1
                             ),
                             internalTessellation(
-                                    treemap.right!!,
+                                    treemap.right,
                                     ww * treemap.split + xx, yy, ww * treemap.oppositeSplit(), hh,
                                     breadth + 1
                             )
@@ -35,12 +39,12 @@ class Tessellation<out T>(val item: T, val x: Double, val y: Double, val w: Doub
                 } else {
                     return listOf(
                             internalTessellation(
-                                    treemap.left!!,
+                                    treemap.left,
                                     xx, yy, ww, hh * treemap.split,
                                     breadth + 1
                             ),
                             internalTessellation(
-                                    treemap.right!!,
+                                    treemap.right,
                                     xx, hh * treemap.split + yy, ww, hh * treemap.oppositeSplit(),
                                     breadth + 1
                             )
